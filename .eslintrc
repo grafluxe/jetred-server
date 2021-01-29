@@ -1,0 +1,24 @@
+{
+  "root": true,
+  "plugins": ["@typescript-eslint", "fp", "prettier"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "extends": [
+    "airbnb-typescript/base",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "plugin:fp/recommended"
+  ],
+  "rules": {
+    "prettier/prettier": "error",
+    "import/extensions": ["error", "never", { "json": "always" }],
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/no-unused-vars": "warn",
+    "fp/no-nil": "off",
+    "fp/no-unused-expression": "off",
+    "fp/no-mutation": ["error", { "exceptions": [{ "property": "current" }] }]
+  },
+  "ignorePatterns": ["jest.config.js"]
+}
