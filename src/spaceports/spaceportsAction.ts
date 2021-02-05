@@ -1,8 +1,10 @@
 import { Maybe } from "graphql/jsutils/Maybe";
 import { UserInputError } from "apollo-server";
 import spaceports from "./spaceports.json";
-import { Port as Spaceport } from "../shared/types";
-import { findPort, getPortOverlaps } from "../shared/portsAction";
+import { Port } from "../shared/types";
+import { findPort } from "../shared/portsAction";
+
+type Spaceport = Port;
 
 const findSpaceport = findPort(spaceports);
 
@@ -10,6 +12,17 @@ export const getSpaceports = (): Spaceport[] => spaceports;
 
 export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
   findSpaceport(search);
+
+const getPortOverlaps = (portA: Port) => (
+  prepend: string[],
+  portB: Port
+): string[] =>
+  [
+    prepend,
+    portA.code === portB.code ? "code" : [],
+    portA.name === portB.name ? "name" : [],
+    portA.location === portB.location ? "location" : [],
+  ].flat();
 
 export const addSpaceport = (spaceport: Spaceport): Spaceport => {
   const getSpaceportOverlaps = getPortOverlaps(spaceport);

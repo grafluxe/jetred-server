@@ -11,14 +11,3 @@ export const findPort: FindPort = (ports) => (search) => {
       code === port.code || name === port.name || location === port.location
   );
 };
-
-export const getPortOverlaps = (portA: Port) => (
-  prepend: string[],
-  portB: Port
-): string[] =>
-  [
-    prepend,
-    portA.code === portB.code ? "code" : [],
-    portA.name === portB.name ? "name" : [],
-    portA.location === portB.location ? "location" : [],
-  ].flat();
