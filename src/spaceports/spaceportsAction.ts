@@ -6,12 +6,10 @@ import { findPort } from "../shared/portsAction";
 
 type Spaceport = Port;
 
-const findSpaceport = findPort(spaceports);
-
 export const getSpaceports = (): Spaceport[] => spaceports;
 
 export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
-  findSpaceport(search);
+  findPort(spaceports)(search);
 
 const getPortOverlaps = (portA: Port) => (
   prepend: string[],
