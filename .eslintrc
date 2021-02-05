@@ -18,7 +18,8 @@
     "@typescript-eslint/no-unused-vars": "warn",
     "fp/no-nil": "off",
     "fp/no-unused-expression": "off",
-    "fp/no-mutation": ["error", { "exceptions": [{ "property": "current" }] }]
+    "fp/no-mutation": ["error", { "exceptions": [{ "property": "current" }] }],
+    "fp/no-throw": "off"
   },
   "ignorePatterns": ["jest.config.js"]
 }
