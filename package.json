@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "JetRed Server",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "NODE_ENV=production node build/index.js",
     "watch": "nodemon src/index.ts",
     "prebuild": "npm run lint && npm test",
     "build": "tsc",
