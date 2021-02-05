@@ -7,6 +7,7 @@ export const findPort: FindPort = (ports) => (search) => {
   const { code, name, location } = search;
 
   return ports.find(
-    (p: Port) => code === p.code || name === p.name || location === p.location
+    (port: Port) =>
+      code === port.code || name === port.name || location === port.location
   );
 };
