@@ -4,8 +4,8 @@ export default gql`
   type Query
 
   type Port {
-    code: ID!
-    name: ID!
-    location: ID!
+    code: String!
+    name: String!
+    location: String!
   }
 `;
