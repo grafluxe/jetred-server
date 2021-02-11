@@ -12,11 +12,11 @@ export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
   findPort(spaceports)(search);
 
 const getPortOverlaps = (portA: Port) => (
-  prepend: string[],
+  initialValue: string[],
   portB: Port
 ): string[] =>
   [
-    prepend,
+    initialValue,
     portA.code === portB.code ? "code" : [],
     portA.name === portB.name ? "name" : [],
     portA.location === portB.location ? "location" : [],
