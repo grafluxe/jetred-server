@@ -1,6 +1,7 @@
 import { Maybe } from "graphql/jsutils/Maybe";
 import { UserInputError } from "apollo-server";
 import spaceports from "./spaceports.json";
+import airports from "../airports/airports.json";
 import { Port } from "../shared/types";
 import { findPort } from "../shared/portsAction";
 
@@ -22,16 +23,40 @@ const getPortOverlaps = (portA: Port) => (
     portA.location === portB.location ? "location" : [],
   ].flat();
 
+const checkOverlaps = (
+  overlaps: string[],
+  portType: string,
+  solo: boolean
+): string => {
+  const firstLetter = solo ? "T" : "t";
+  return `${firstLetter}he ${overlaps.join(
+    " & "
+  )} you've entered has already been assigned to ${
+    portType === "space" ? "a" : "an"
+  } ${portType}port`;
+};
+
 export const addSpaceport = (spaceport: Spaceport): Spaceport => {
   const getSpaceportOverlaps = getPortOverlaps(spaceport);
-  const spaceportOverlaps = spaceports.reduce(getSpaceportOverlaps, []);
+  const spaceportOverlaps: string[] = spaceports.reduce(
+    getSpaceportOverlaps,
+    []
+  );
+  const airportOverlaps: string[] = airports.reduce(getSpaceportOverlaps, []);
 
-  if (spaceportOverlaps.length > 0) {
-    const fields = spaceportOverlaps.join(" & ");
+  const spaceErrorMessage =
+    spaceportOverlaps.length > 0
+      ? checkOverlaps(spaceportOverlaps, "space", true)
+      : [];
 
-    throw new UserInputError(
-      `The ${fields} you've entered has already been assigned to a spaceport`
-    );
+  const airErrorMessage =
+    airportOverlaps.length > 0
+      ? checkOverlaps(airportOverlaps, "air", spaceErrorMessage.length === 0)
+      : [];
+
+  if (spaceErrorMessage || airErrorMessage) {
+    const errorMessages = [spaceErrorMessage, airErrorMessage];
+    throw new UserInputError(errorMessages.flat().join(" & "));
   }
 
   // eslint-disable-next-line fp/no-mutating-methods
