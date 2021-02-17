@@ -12,15 +12,15 @@ export const getSpaceports = (): Spaceport[] => spaceports;
 export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
   findPort(spaceports)(search);
 
-const getPortOverlaps = (portA: Port) => (
+const overlapCheck = (withPort: Port) => (
   initialValue: string[],
-  portB: Port
+  againstPort: Port
 ): string[] =>
   [
     initialValue,
-    portA.code === portB.code ? "code" : [],
-    portA.name === portB.name ? "name" : [],
-    portA.location === portB.location ? "location" : [],
+    withPort.code === againstPort.code ? "code" : [],
+    withPort.name === againstPort.name ? "name" : [],
+    withPort.location === againstPort.location ? "location" : [],
   ].flat();
 
 const checkOverlaps = (
@@ -37,7 +37,7 @@ const checkOverlaps = (
 };
 
 export const addSpaceport = (spaceport: Spaceport): Spaceport => {
-  const getSpaceportOverlaps = getPortOverlaps(spaceport);
+  const getSpaceportOverlaps = overlapCheck(spaceport);
   const spaceportOverlaps: string[] = spaceports.reduce(
     getSpaceportOverlaps,
     []
