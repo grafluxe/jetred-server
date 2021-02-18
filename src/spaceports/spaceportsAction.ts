@@ -12,51 +12,63 @@ export const getSpaceports = (): Spaceport[] => spaceports;
 export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
   findPort(spaceports)(search);
 
-const getPortOverlaps = (portA: Port) => (
+const overlapCheck = (withPort: Port) => (
   initialValue: string[],
-  portB: Port
+  againstPort: Port
 ): string[] =>
   [
     initialValue,
-    portA.code === portB.code ? "code" : [],
-    portA.name === portB.name ? "name" : [],
-    portA.location === portB.location ? "location" : [],
+    withPort.code === againstPort.code ? "code" : [],
+    withPort.name === againstPort.name ? "name" : [],
+    withPort.location === againstPort.location ? "location" : [],
   ].flat();
 
-const checkOverlaps = (
+const overlapMessage = (
   overlaps: string[],
-  portType: string,
-  solo: boolean
+  port: string,
+  append: boolean = false
 ): string => {
-  const firstLetter = solo ? "T" : "t";
-  return `${firstLetter}he ${overlaps.join(
-    " & "
-  )} you've entered has already been assigned to ${
-    portType === "space" ? "a" : "an"
-  } ${portType}port`;
+  const fields = overlaps.join(" and ");
+  const the = !append ? "The" : " and the";
+  const verb = overlaps.length === 1 ? "has" : "have";
+  const portType = `${port === "spaceport" ? "a" : "an"} ${port}`;
+
+  return `${the} ${fields} you've entered ${verb} already been assigned to ${portType}`;
+};
+
+const getOverlapError = (
+  spaceportOverlaps: string[],
+  airportOverlaps: string[]
+): Maybe<string> => {
+  const hasSpaceportOverlap = spaceportOverlaps.length > 0;
+  const hasAirportOverlap = airportOverlaps.length > 0;
+
+  if (hasSpaceportOverlap && !hasAirportOverlap) {
+    return overlapMessage(spaceportOverlaps, "spaceport");
+  }
+
+  if (!hasSpaceportOverlap && hasAirportOverlap) {
+    return overlapMessage(airportOverlaps, "airport");
+  }
+
+  if (hasSpaceportOverlap && hasAirportOverlap) {
+    return (
+      overlapMessage(spaceportOverlaps, "spaceport") +
+      overlapMessage(airportOverlaps, "airport", true)
+    );
+  }
+
+  return null;
 };
 
 export const addSpaceport = (spaceport: Spaceport): Spaceport => {
-  const getSpaceportOverlaps = getPortOverlaps(spaceport);
-  const spaceportOverlaps: string[] = spaceports.reduce(
-    getSpaceportOverlaps,
-    []
-  );
-  const airportOverlaps: string[] = airports.reduce(getSpaceportOverlaps, []);
+  const spaceportOverlapChecker = overlapCheck(spaceport);
+  const spaceportOverlaps = spaceports.reduce(spaceportOverlapChecker, []);
+  const airportOverlaps = airports.reduce(spaceportOverlapChecker, []);
+  const overlapError = getOverlapError(spaceportOverlaps, airportOverlaps);
 
-  const spaceErrorMessage =
-    spaceportOverlaps.length > 0
-      ? checkOverlaps(spaceportOverlaps, "space", true)
-      : [];
-
-  const airErrorMessage =
-    airportOverlaps.length > 0
-      ? checkOverlaps(airportOverlaps, "air", spaceErrorMessage.length === 0)
-      : [];
-
-  if (spaceErrorMessage || airErrorMessage) {
-    const errorMessages = [spaceErrorMessage, airErrorMessage];
-    throw new UserInputError(errorMessages.flat().join(" & "));
+  if (overlapError) {
+    throw new UserInputError(overlapError);
   }
 
   // eslint-disable-next-line fp/no-mutating-methods
