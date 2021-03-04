@@ -8,7 +8,8 @@
     "prebuild": "npm run lint && npm test",
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "localStore": "docker start -a local_jetred_server"
   },
   "contributors": [
     "Leandro Silva (http://grafluxe.com)",
