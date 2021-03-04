@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "JetRed Server",
   "scripts": {
-    "start": "NODE_ENV=production node build/index.js",
-    "watch": "nodemon src/index.ts",
+    "start": "NODE_ENV=production node -r dotenv/config build/index.js",
+    "watch": "nodemon -r dotenv/config src/index.ts",
     "prebuild": "npm run lint && npm test",
     "build": "tsc",
     "test": "jest",
@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "apollo-server": "^2.19.2",
+    "dotenv": "^8.2.0",
     "graphql": "^15.5.0",
     "lodash.merge": "^4.6.2",
     "mysql2": "^2.2.5"
