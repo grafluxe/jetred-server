@@ -1,13 +1,28 @@
-import { Maybe } from "graphql/jsutils/Maybe";
+import { ApolloError } from "apollo-server";
 import { Port as Spaceport } from "../shared/types";
-import { getSpaceports, getSpaceport, addSpaceport } from "./spaceportsAction";
+import { spaceportsStore } from "./spaceportsStore";
+import { addSpaceport } from "./spaceportsAction";
 
-const spaceports = (): Spaceport[] => getSpaceports();
+const spaceports = async (): Promise<Spaceport[] | ApolloError> => {
+  try {
+    return await spaceportsStore.selectAll();
+  } catch (err) {
+    return new ApolloError("An error occured when querying spaceports");
+  }
+};
 
-const spaceport = (prev: {}, search: Spaceport): Maybe<Spaceport> =>
-  getSpaceport(search);
+const spaceport = async (
+  parent: {},
+  search: Partial<Spaceport>
+): Promise<Spaceport[] | ApolloError> => {
+  try {
+    return await spaceportsStore.select(search);
+  } catch (err) {
+    return new ApolloError("An error occured when querying spaceports");
+  }
+};
 
-const createSpaceport = (prev: {}, newSpaceport: Spaceport): Spaceport =>
+const createSpaceport = (parent: {}, newSpaceport: Spaceport): Spaceport =>
   addSpaceport(newSpaceport);
 
 export default {

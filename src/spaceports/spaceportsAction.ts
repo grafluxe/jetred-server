@@ -3,14 +3,8 @@ import { UserInputError } from "apollo-server";
 import spaceports from "./spaceports.json";
 import airports from "../airports/airports.json";
 import { Port } from "../shared/types";
-import { findPort } from "../shared/portsAction";
 
 type Spaceport = Port;
-
-export const getSpaceports = (): Spaceport[] => spaceports;
-
-export const getSpaceport = (search: Partial<Spaceport>): Maybe<Spaceport> =>
-  findPort(spaceports)(search);
 
 const overlapCheck = (withPort: Port) => (
   initialValue: string[],
