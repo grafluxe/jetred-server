@@ -1,5 +1,3 @@
-import { Maybe } from "graphql/jsutils/Maybe";
-
 export type Port = {
   code: string;
   name: string;
@@ -7,7 +5,7 @@ export type Port = {
 };
 
 export type QueryStore = {
-  selectOne: (port: Partial<Port>) => Promise<Maybe<Port>>;
+  select: (port: Partial<Port>) => Promise<Port[]>;
   selectAll: () => Promise<Port[]>;
   insert?: () => void;
 };

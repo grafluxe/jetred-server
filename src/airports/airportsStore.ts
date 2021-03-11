@@ -1,9 +1,8 @@
-import { Maybe } from "graphql/jsutils/Maybe";
 import { execute, query } from "../store";
 import { Port as Airport, QueryStore } from "../shared/types";
 
 export const airportsStore: QueryStore = {
-  selectOne: ({ code, name, location }): Promise<Maybe<Airport>> =>
+  select: ({ code, name, location }): Promise<Airport[]> =>
     execute(
       `SELECT * FROM airports
         WHERE code = ?

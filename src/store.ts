@@ -1,5 +1,5 @@
 import mysql from "mysql2";
-import { Connection, RowDataPacket } from "mysql2/promise";
+import { Connection } from "mysql2/promise";
 
 const { DB_HOST, DB_USER, DB_PWD, DB_NAME } = process.env;
 
@@ -21,9 +21,10 @@ export const query = async <T>(stmt: string): Promise<T[]> => {
 export const execute = async <T>(
   stmt: string,
   values: any | any[]
-): Promise<T> => {
+): Promise<T[]> => {
   const definedValues = values.map((el: string) => el || "");
+
   const [rows] = await conn.execute(stmt, definedValues);
 
-  return (rows as RowDataPacket)[0] as T;
+  return rows as T[];
 };
