@@ -3,20 +3,14 @@ import { Port as Spaceport } from "../shared/types";
 import { spaceportsStore } from "./spaceportsStore";
 import { addSpaceport } from "./spaceportsAction";
 
-const spaceports = async (): Promise<Spaceport[] | ApolloError> => {
-  try {
-    return await spaceportsStore.selectAll();
-  } catch (err) {
-    return new ApolloError("An error occured when querying spaceports");
-  }
-};
-
-const spaceport = async (
+const spaceports = async (
   parent: {},
   search: Partial<Spaceport>
 ): Promise<Spaceport[] | ApolloError> => {
   try {
-    return await spaceportsStore.select(search);
+    return Object.keys(search).length === 0
+      ? await spaceportsStore.selectAll()
+      : await spaceportsStore.select(search);
   } catch (err) {
     return new ApolloError("An error occured when querying spaceports");
   }
@@ -28,7 +22,6 @@ const createSpaceport = (parent: {}, newSpaceport: Spaceport): Spaceport =>
 export default {
   Query: {
     spaceports,
-    spaceport,
   },
   Mutation: {
     createSpaceport,
