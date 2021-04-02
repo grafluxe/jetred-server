@@ -1,7 +1,8 @@
 import { ApolloError } from "apollo-server";
 import { Port as Spaceport } from "../shared/types";
+import { airportsStore } from "../airports/airportsStore";
 import { spaceportsStore } from "./spaceportsStore";
-import { addSpaceport } from "./spaceportsAction";
+import { spaceportOverlap } from "./spaceportOverlap";
 
 const spaceports = async (
   parent: {},
@@ -16,8 +17,34 @@ const spaceports = async (
   }
 };
 
-const createSpaceport = (parent: {}, newSpaceport: Spaceport): Spaceport =>
-  addSpaceport(newSpaceport);
+const createSpaceport = async (
+  parent: {},
+  newSpaceport: Spaceport
+): Promise<Spaceport | ApolloError> => {
+  try {
+    const allSpaceports = await spaceportsStore.selectAll();
+    const allAirports = await airportsStore.selectAll();
+    const invalidAddition = spaceportOverlap(
+      newSpaceport,
+      allSpaceports,
+      allAirports
+    );
+
+    if (invalidAddition) return new ApolloError(invalidAddition);
+
+    const inserted = await spaceportsStore.insert!(newSpaceport);
+
+    /*   if (!inserted) {
+      return new ApolloError("ERRRRRR");
+    } */
+
+    return newSpaceport;
+  } catch (err) {
+    return new ApolloError(
+      "A database error occured when adding a new spaceport"
+    );
+  }
+};
 
 export default {
   Query: {

@@ -11,4 +11,10 @@ export const spaceportsStore: QueryStore = {
       [code, name, location]
     ),
   selectAll: (): Promise<Spaceport[]> => query("SELECT * FROM spaceports"),
+  insert: ({ code, name, location }: Spaceport): Promise<any> =>
+    execute(
+      `INSERT INTO spaceports (code, name, location)
+    VALUES (?, ?, ?)`,
+      [code, name, location]
+    ),
 };

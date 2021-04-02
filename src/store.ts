@@ -23,7 +23,6 @@ export const execute = async <T>(
   values: any | any[]
 ): Promise<T[]> => {
   const definedValues = values.map((el: string) => el || "");
-
   const [rows] = await conn.execute(stmt, definedValues);
 
   return rows as T[];

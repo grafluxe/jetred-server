@@ -2,7 +2,7 @@ import { execute, query } from "../store";
 import { Port as Airport, QueryStore } from "../shared/types";
 
 export const airportsStore: QueryStore = {
-  select: ({ code, name, location }): Promise<Airport[]> =>
+  select: ({ code, name, location }: Partial<Airport>): Promise<Airport[]> =>
     execute(
       `SELECT * FROM airports
         WHERE code = ?

@@ -1,10 +1,8 @@
 import { Maybe } from "graphql/jsutils/Maybe";
-import { UserInputError } from "apollo-server";
-import spaceports from "./spaceports.json";
-import airports from "../airports/airports.json";
 import { Port } from "../shared/types";
 
 type Spaceport = Port;
+type Airport = Port;
 
 const overlapCheck = (withPort: Port) => (
   initialValue: string[],
@@ -55,17 +53,14 @@ const getOverlapError = (
   return null;
 };
 
-export const addSpaceport = (spaceport: Spaceport): Spaceport => {
-  const spaceportOverlapChecker = overlapCheck(spaceport);
+export const spaceportOverlap = (
+  newSpaceport: Spaceport,
+  spaceports: Spaceport[],
+  airports: Airport[]
+): Maybe<string> => {
+  const spaceportOverlapChecker = overlapCheck(newSpaceport);
   const spaceportOverlaps = spaceports.reduce(spaceportOverlapChecker, []);
   const airportOverlaps = airports.reduce(spaceportOverlapChecker, []);
-  const overlapError = getOverlapError(spaceportOverlaps, airportOverlaps);
 
-  if (overlapError) {
-    throw new UserInputError(overlapError);
-  }
-
-  // eslint-disable-next-line fp/no-mutating-methods
-  spaceports.push(spaceport);
-  return spaceport;
+  return getOverlapError(spaceportOverlaps, airportOverlaps);
 };
